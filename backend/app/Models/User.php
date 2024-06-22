@@ -46,4 +46,8 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function receivesBroadcastNotification():string{
+        return 'notifications.'.$this->id;
+    }
 }

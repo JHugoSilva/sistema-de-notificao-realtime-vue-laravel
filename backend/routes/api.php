@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\LikeCommentController;
 use App\Http\Controllers\Api\PostController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')->controller(AuthController::class)->group(function(){
@@ -27,7 +28,10 @@ Route::prefix('user')->middleware('auth:sanctum')->group(function(){
     Route::controller(LikeCommentController::class)->group(function(){
         Route::post('comments', 'postComment');
         Route::get('like/{postId}', 'likeUnLike');
+    });
 
-
+    Route::controller(UserController::class)->group(function(){
+        Route::get('notifications/{id}', 'markNotificationComplete');
+        Route::get('notifications', 'markAllNotificationComplete');
     });
 });

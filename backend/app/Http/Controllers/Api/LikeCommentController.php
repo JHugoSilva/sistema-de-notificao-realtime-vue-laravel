@@ -7,6 +7,10 @@ use App\Events\LikeEvent;
 use App\Http\Controllers\Controller;
 use App\Models\Comment;
 use App\Models\Like;
+use App\Models\Post;
+use App\Models\User;
+use App\Notifications\CommentNotification;
+use App\Notifications\LikeNotification;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -27,6 +31,12 @@ class LikeCommentController extends Controller
         ]);
 
         $comment->load('user:id,first_name,last_name');
+        $user = $request->user;
+
+        $post = Post::find($request->post_id);
+        $postUser = User::find($post->user_id);
+        $title = $user->first_name.' '.$user->last_name.' Comment your post.';
+        $postUser->notify(new CommentNotification($title, $post));
 
         broadcast(new CommentEvent($comment))->toOthers();
 
@@ -47,22 +57,26 @@ class LikeCommentController extends Controller
                 'user_id' => $user->id,
                 'post_id' => $postId,
             ]);
+            $like->load('user:id,first_name,last_name');
+            $post = Post::find($postId);
+            $postUser = User::find($post->user_id);
+            $title = $user->first_name.' '.$user->last_name.' Liked your post.';
+            $postUser->notify(new LikeNotification($title, $post));
         }
 
-        if ($exists) {
-            return response()->json(['likeId' => $exists->id], Response::HTTP_OK);
-        }
+        // if ($exists) {
+        //     return response()->json(['likeId' => $exists->id], Response::HTTP_OK);
+        // }
 
-        $like->load('user:id,first_name,last_name');
 
         $data = [
-            'user_id' => $user->id,
-            $like => $exists ? ['like_id' => $exists->id] : $like
+            'type' => $type,
+            $like => $exists ? ['like_id' => $exists->id, 'post_id' => $exists->post_id] : $like
         ];
 
         broadcast(new LikeEvent($data));
 
-        return response()->json($like, Response::HTTP_OK);
+        return response()->json([], Response::HTTP_OK);
 
     }
 }

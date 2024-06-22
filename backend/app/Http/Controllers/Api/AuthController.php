@@ -46,15 +46,25 @@ class AuthController extends Controller
     public function login(Request $request)
     {
 
-        Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'email' => 'required',
             'password' => 'required'
         ]);
 
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => $validator->messages()
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+
         if (!auth()->attempt($request->only(['email', 'password']))) {
-            throw ValidationException::withMessages([
-                'message' => ['The credentials you entered are incorrect.']
+            return response()->json([
+               'message' => 'The credentials you entered are incorrect.'
             ], Response::HTTP_UNAUTHORIZED);
+            // throw ValidationException::withMessages([
+            //     'message' => 'The credentials you entered are incorrect.'
+            // ], Response::HTTP_UNAUTHORIZED);
         }
 
         $user = $request->user();
@@ -63,16 +73,14 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Login success',
-            'user' => $user,
+            'user' => $user->load('notifications'),
             'access_token' => $token
         ], Response::HTTP_OK);
     }
 
     public function getProfile(Request $request)
     {
-
         $user = $request->user();
-
         return response()->json([
             'user' => $user
         ], Response::HTTP_OK);
