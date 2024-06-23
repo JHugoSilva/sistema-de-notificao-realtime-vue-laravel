@@ -1,5 +1,13 @@
 <script setup>
+import { computed } from 'vue';
+import { timeApp } from '@/composables/moment';
 
+
+const { comment } = defineProps(['comment'])
+
+const fullName = computed(()=>{
+	return comment.user.first_name +' '+ comment.user.last_name
+})
 </script>
 
 <template>
@@ -7,11 +15,10 @@
 		<img src="https://randomuser.me/api/portraits/men/32.jpg" alt="user" class="w-8 h-8 rounded-full" />
 		<div class="flex flex-col">
 			<p class="font-semibold">
-			
-				<span class="text-xs text-gray-200">2 hours ago</span>
+				 {{ fullName }}
+				<span class="text-xs text-gray-200">, há {{ timeApp(comment.created_at) }}</span>
 			</p>
-			<p></p>
-			<p class="text-sm">Very Nice</p>
+			<p class="text-sm">{{ comment.content }}</p>
 		</div>
 	</div>
 </template>

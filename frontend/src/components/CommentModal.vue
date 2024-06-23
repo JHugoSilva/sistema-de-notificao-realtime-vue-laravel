@@ -1,6 +1,26 @@
 <script setup>
-import X from 'lucide-vue-next'
+import { X } from 'lucide-vue-next'
 import CommentItem from './CommentItem.vue'
+import CardBody from '@/Card/CardBody.vue';
+import CardHeader from '@/Card/CardHeader.vue';
+import { reactive } from 'vue';
+
+const emits = defineEmits(['postComment'])
+const { post } = defineProps(['post'])
+
+const form = reactive({
+	post_id:post.id,
+	content: ''
+})
+
+const emitComment = () => {
+	// if (form.content === '') return
+	emits('postComment', form)
+	setTimeout(()=>{
+		form.content = ''
+	},500)
+}
+
 </script>
 
 <template>
@@ -16,16 +36,22 @@ import CommentItem from './CommentItem.vue'
 				</button>
 			</div>
 			<div class="overflow-y-auto max-h-[600px] min-h-96 px-2">
-                <div>Post Content</div>
-                <CommentItem/>
+                <div v-if="post.id">
+					<CardHeader :post="post"/>
+					<CardBody :post="post"/>
+				</div>
+                <CommentItem v-for="comment in post.comments" :key="comment.id" :comment="comment"/>
 			</div>
 
 			<div class="flex justify-center w-full mt-2 px-3">
 				<textarea
+					v-model="form.content"
 					class="w-full p-2 resize-none rounded-l-lg"
 					placeholder="Write a comment..."
 				></textarea>
 				<button
+					@click="emitComment"
+					:disabled="form.content == ''"
 					class="bg-blue-500 text-white p-2 rounded-r-lg"
 				>
 					Post

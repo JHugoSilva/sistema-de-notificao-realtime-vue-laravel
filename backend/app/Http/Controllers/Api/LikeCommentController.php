@@ -35,12 +35,12 @@ class LikeCommentController extends Controller
 
         $post = Post::find($request->post_id);
         $postUser = User::find($post->user_id);
-        $title = $user->first_name.' '.$user->last_name.' Comment your post.';
+        $title = $postUser->first_name.' '.$postUser->last_name.' Comment your post.';
         $postUser->notify(new CommentNotification($title, $post));
 
         broadcast(new CommentEvent($comment))->toOthers();
 
-        return response()->json($comment, Response::HTTP_OK);
+        return response()->json($comment->load('user:id,first_name,last_name'), Response::HTTP_OK);
     }
 
     public function likeUnLike(Request $request, $postId) {
@@ -64,19 +64,19 @@ class LikeCommentController extends Controller
             $postUser->notify(new LikeNotification($title, $post));
         }
 
-        // if ($exists) {
-        //     return response()->json(['likeId' => $exists->id], Response::HTTP_OK);
-        // }
+        if ($exists) {
+            return response()->json(['likeId' => $exists->id], Response::HTTP_OK);
+        }
 
 
         $data = [
             'type' => $type,
-            $like => $exists ? ['like_id' => $exists->id, 'post_id' => $exists->post_id] : $like
+            'like' => $exists ? ['like_id' => $exists->id, 'post_id' => $exists->post_id] : $like
         ];
 
         broadcast(new LikeEvent($data));
 
-        return response()->json([], Response::HTTP_OK);
+        return response()->json([], Response::HTTP_CREATED);
 
     }
 }
