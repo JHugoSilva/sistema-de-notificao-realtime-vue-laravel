@@ -3,10 +3,10 @@ import { computed } from 'vue';
 import { timeApp } from '@/composables/moment';
 
 
-const { comment } = defineProps(['comment'])
+const props = defineProps(['comment'])
 
 const fullName = computed(()=>{
-	return comment.user.first_name +' '+ comment.user.last_name
+	return props.comment?.user?.first_name +' '+ props.comment?.user?.last_name
 })
 </script>
 

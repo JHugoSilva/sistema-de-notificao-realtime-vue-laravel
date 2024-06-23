@@ -24,23 +24,24 @@ class LikeCommentController extends Controller
             'content' => 'required|min:1|max:250'
         ]);
 
+        $user = $request->user();
         $comment = Comment::create([
-            'user_id' => $request->user()->id,
+            'user_id' => $user->id,
             'post_id' => $request->post_id,
             'content' => $request->content
         ]);
-
         $comment->load('user:id,first_name,last_name');
-        $user = $request->user;
+
 
         $post = Post::find($request->post_id);
         $postUser = User::find($post->user_id);
-        $title = $postUser->first_name.' '.$postUser->last_name.' Comment your post.';
+        $title = $user->first_name.' '.$user->last_name.' Comment your post.';
+
         $postUser->notify(new CommentNotification($title, $post));
 
         broadcast(new CommentEvent($comment))->toOthers();
 
-        return response()->json($comment->load('user:id,first_name,last_name'), Response::HTTP_OK);
+        return response()->json($comment, Response::HTTP_OK);
     }
 
     public function likeUnLike(Request $request, $postId) {

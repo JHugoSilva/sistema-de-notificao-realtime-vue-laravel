@@ -40,7 +40,7 @@ const emitComment = () => {
 					<CardHeader :post="post"/>
 					<CardBody :post="post"/>
 				</div>
-                <CommentItem v-for="comment in post.comments" :key="comment.id" :comment="comment"/>
+                <CommentItem v-for="comment in post.comments" :key="comment?.id" :comment="comment"/>
 			</div>
 
 			<div class="flex justify-center w-full mt-2 px-3">

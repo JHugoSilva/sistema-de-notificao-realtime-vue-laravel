@@ -5,7 +5,7 @@ import { timeApp } from '@/composables/moment'
 const { post } = defineProps(['post'])
 
 const fullName = computed(()=>{
-    return post.user.first_name +' '+ post.user.last_name
+    return post.user?.first_name +' '+ post.user?.last_name
 })
 
 </script>
