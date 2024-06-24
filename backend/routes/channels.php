@@ -19,5 +19,5 @@ Broadcast::channel('like', function ($user) {
 });
 
 Broadcast::channel('notification.{id}', function ($user, $id) {
-    return $user === (int) $id;
+    return (int) $user->id === (int) $id;
 });

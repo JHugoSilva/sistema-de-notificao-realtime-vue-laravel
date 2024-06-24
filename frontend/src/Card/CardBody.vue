@@ -10,6 +10,6 @@ const { post } = defineProps(['post'])
         <p class="text-sm">
             {{ post.text }}
         </p>
-        <img class="rounded-lg" width="150" :src="commonStore.mediaUrl + post.image" alt="">
+        <img v-if="post.image" class="rounded-lg" width="150" :src="commonStore.mediaUrl + post.image" alt="">
     </div>
 </template>

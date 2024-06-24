@@ -66,7 +66,8 @@ class CommentNotification extends Notification implements ShouldBroadcast
     public function toArray(object $notifiable): array
     {
         return [
-            //
+            'title' => $this->title,
+            'post_id' => $this->post->id
         ];
     }
 }

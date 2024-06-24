@@ -19,3 +19,11 @@ export function changePassword(data) {
 export function logoOut() {
     return http().delete('auth/logout')
 }
+
+export function forgotPasswordRequest(data) {
+    return http().post('auth/forget-password-request', data)
+}
+
+export function forgotPassword(data) {
+    return http().post('auth/forget-password', data)
+}

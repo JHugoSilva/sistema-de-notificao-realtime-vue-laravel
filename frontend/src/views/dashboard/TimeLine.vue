@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, ref } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import Card from "@/components/Card.vue";
 import { usePostStore } from "@/stores/postStore";
 import CommentModal from "@/components/CommentModal.vue";
@@ -10,8 +10,20 @@ const commentModalIsOpen = ref(false);
 const postModalIsOpen = ref(false);
 const selectedPost = ref({});
 const errors = ref({});
-const postData = reactive({});
 postStore.getPosts();
+
+onMounted(()=>{
+  // console.log(Echo.private('post').listen('PostEvent'));
+  Echo.private('post').listen('PostEvent', (e) => {
+    postStore.addToPostArray(e.data)
+  })
+  Echo.private('comment').listen('CommentEvent', (e) => {
+    postStore.addToCommentArray(e.data)
+  })
+  Echo.private('like').listen('LikeEvent', (e) => {
+    postStore.addToLikeArray(e.data)
+  })
+})
 
 const handleLikeUnLikePost = async (id) => {
   try {

@@ -16,6 +16,8 @@ use Illuminate\Http\Response;
 
 class LikeCommentController extends Controller
 {
+    public $type;
+    public $data;
 
     public function postComment(Request $request) {
 
@@ -48,11 +50,10 @@ class LikeCommentController extends Controller
 
         $user = $request->user();
         $exists = Like::where('user_id', $user->id)->where('post_id', $postId)->first();
-
         if ($exists) {
             $type = 'unlike';
             $exists->delete();
-        } else {
+        }else {
             $type = 'like';
             $like = Like::create([
                 'user_id' => $user->id,
@@ -61,23 +62,19 @@ class LikeCommentController extends Controller
             $like->load('user:id,first_name,last_name');
             $post = Post::find($postId);
             $postUser = User::find($post->user_id);
-            $title = $user->first_name.' '.$user->last_name.' Liked your post.';
+            $title = $user->first_name .' '. $user->last_name. ' Liked your post.';
             $postUser->notify(new LikeNotification($title, $post));
         }
 
-        if ($exists) {
-            return response()->json(['likeId' => $exists->id], Response::HTTP_OK);
-        }
-
-
         $data = [
             'type' => $type,
-            'like' => $exists ? ['like_id' => $exists->id, 'post_id' => $exists->post_id] : $like
+            'like' => $exists ? ['like_id' => $exists->id, 'post_id' => $exists->post_id] : $like,
         ];
 
-        broadcast(new LikeEvent($data));
+        broadcast(new \App\Events\LikeEvent($data));
 
-        return response()->json([], Response::HTTP_CREATED);
+
+        return response()->json([], 200);
 
     }
 }
