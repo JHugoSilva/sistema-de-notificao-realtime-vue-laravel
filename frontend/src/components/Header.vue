@@ -1,5 +1,5 @@
 <script setup>
-import { Settings, LogOut } from 'lucide-vue-next'
+import { Settings, LogOut, Bell } from 'lucide-vue-next'
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore';
 
@@ -22,10 +22,14 @@ const logout = async() => {
 
 <template>
     <div class="sticky top-0 z-10 bg-gray-200 flex justify-between h-16 w-full border-b-2 shadow-sm py-2 px-4 border-gray-300">
-        <div>
+        <router-link to="/timeline">
             <img class="w-12 h-12" src="../assets/logo.svg" alt=""/>
-        </div>
-        <div class="mt-3 flex gap-2">
+        </router-link>
+        <div class="mt-3 flex gap-4">
+            <button @click="navigateTo('/notifications')" class="mr-2 relative">
+                <Bell/>
+                <div v-if="authStore.user.notifications.length > 0" class="absolute top-0 right-0 w-2 h-2 bg-red-600 rounded-full"></div>
+            </button>
             <button @click="navigateTo('/settings')" class="mr-2">
                 <Settings/>
             </button>

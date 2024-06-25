@@ -22,6 +22,11 @@ const routes = [
                 path: '/settings',
                 name: 'dashboard.settings',
                 component: () => import('../views/dashboard/Settings.vue')
+            },
+            {
+                path: '/notifications',
+                name: 'dashboard.notifications',
+                component: () => import('../views/dashboard/Notifications.vue')
             }
         ],
         beforeEnter(to, from , next){

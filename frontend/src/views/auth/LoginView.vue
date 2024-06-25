@@ -83,7 +83,7 @@ const openForgotPasswordModalIsOpen = () => {
         </h2>
       </div>
       <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-        {{ errors }}
+        <!-- {{ errors }} -->
         <small class="text-red-500" v-if="Object.values(errors) != 0">{{
           errors
         }}</small>
@@ -103,9 +103,6 @@ const openForgotPasswordModalIsOpen = () => {
             }}</small>
           </div>
           <div>
-            <label for="password" class="block text-sm text-gray-800"
-              >Password</label
-            >
             <div class="flex justify-between">
               <label for="" class="block text-sm text-gray-800">Password</label>
               <button
@@ -136,7 +133,6 @@ const openForgotPasswordModalIsOpen = () => {
               Login
             </button>
           </div>
-          {{ step }}
         </form>
       </div>
     </div>

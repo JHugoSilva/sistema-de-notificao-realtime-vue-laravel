@@ -47,7 +47,7 @@ class User extends Authenticatable
         ];
     }
 
-    public function receivesBroadcastNotification():string{
+    public function receivesBroadcastNotificationsOn():string{
         return 'notifications.'.$this->id;
     }
 }

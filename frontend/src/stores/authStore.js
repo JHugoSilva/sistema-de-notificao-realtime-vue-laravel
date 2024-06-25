@@ -1,4 +1,4 @@
-import { changePassword, logoOut, updateProfile, forgotPassword, forgotPasswordRequest } from "@/services/auth_service"
+import { changePassword, logoOut, updateProfile, forgotPassword, forgotPasswordRequest, markNotificationComplete, markAllNotificationComplete } from "@/services/auth_service"
 import { defineStore }  from "pinia"
 
 export const useAuthStore = defineStore('authStore', {
@@ -61,6 +61,22 @@ export const useAuthStore = defineStore('authStore', {
         async handleForgotPassword(data) {
             try {
                 await forgotPassword(data)
+            } catch (error) {
+                throw error
+            }
+        },
+        async handleNotificationMarkComplete(id) {
+            try {
+                await markNotificationComplete(id)
+                this.user.notifications = this.user.notifications.filter(n => n.id != id)
+            } catch (error) {
+                throw error
+            }
+        },
+        async handleAllNotificationMarkComplete() {
+            try {
+                await markAllNotificationComplete()
+                this.user.notifications = []
             } catch (error) {
                 throw error
             }

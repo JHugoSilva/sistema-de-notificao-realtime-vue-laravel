@@ -16,9 +16,6 @@ use Illuminate\Http\Response;
 
 class LikeCommentController extends Controller
 {
-    public $type;
-    public $data;
-
     public function postComment(Request $request) {
 
         $request->validate([
@@ -71,7 +68,7 @@ class LikeCommentController extends Controller
             'like' => $exists ? ['like_id' => $exists->id, 'post_id' => $exists->post_id] : $like,
         ];
 
-        broadcast(new \App\Events\LikeEvent($data));
+        broadcast(new LikeEvent($data));
 
 
         return response()->json([], 200);

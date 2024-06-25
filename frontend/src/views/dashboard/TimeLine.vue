@@ -1,11 +1,14 @@
 <script setup>
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, watch, ref } from "vue";
 import Card from "@/components/Card.vue";
 import { usePostStore } from "@/stores/postStore";
 import CommentModal from "@/components/CommentModal.vue";
 import PostModal from "@/components/Post/PostModal.vue";
-
+import { useRoute } from "vue-router";
+import { useAuthStore } from "@/stores/authStore";
+const auth = useAuthStore()
 const postStore = usePostStore();
+const route = useRoute()
 const commentModalIsOpen = ref(false);
 const postModalIsOpen = ref(false);
 const selectedPost = ref({});
@@ -13,7 +16,6 @@ const errors = ref({});
 postStore.getPosts();
 
 onMounted(()=>{
-  // console.log(Echo.private('post').listen('PostEvent'));
   Echo.private('post').listen('PostEvent', (e) => {
     postStore.addToPostArray(e.data)
   })
@@ -23,7 +25,12 @@ onMounted(()=>{
   Echo.private('like').listen('LikeEvent', (e) => {
     postStore.addToLikeArray(e.data)
   })
+  Echo.private(`notifications.${auth.user.id}`).notification((e) => {
+    auth.user.notifications.push(e)
+  })
 })
+
+
 
 const handleLikeUnLikePost = async (id) => {
   try {
@@ -64,6 +71,14 @@ const openCommentModal = (post) => {
 const _openPostModal = () => {
   postModalIsOpen.value = true;
 };
+
+watch(()=>{
+  const postId = route.query.post
+  const post = postStore.posts.find(p => p.id == postId)
+  if (post) {
+    openCommentModal(post)
+  }
+})
 </script>
 
 <template>
@@ -88,9 +103,9 @@ const _openPostModal = () => {
       @close="() => (commentModalIsOpen = false)"
     />
     <PostModal
+     :isOpen="postModalIsOpen"
       @createPost="handleCreatePost"
-      :isOpen="postModalIsOpen"
-      :close="() => (postModalIsOpen = false)"
+      @close="() => (postModalIsOpen = false)"
     />
   </div>
 </template>
